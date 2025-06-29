@@ -5,15 +5,6 @@ namespace InterfocusConsole.Models
 {
     public class Aluno : INomeavel, IEntidade
     {
-        //private string nome;
-        //public string GetNome()
-        //{
-        //    return nome;
-        //}
-        //public void SetNome(string nome)
-        //{
-        //    this.nome = nome;
-        //}
         public long Id { get; set; }
         [Required, MaxLength(50)]
         public string Nome { get; set; }
