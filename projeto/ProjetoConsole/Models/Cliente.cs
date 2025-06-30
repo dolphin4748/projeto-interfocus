@@ -1,18 +1,18 @@
-﻿using InterfocusConsole.Interfaces;
+﻿using ProjetoConsole.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace InterfocusConsole.Models
+namespace ProjetoConsole.Models
 {
-    public class Aluno : INomeavel, IEntidade
+    public class Cliente : INomeavel, IEntidade
     {
         public long Id { get; set; }
         [Required, MaxLength(50)]
         public string Nome { get; set; }
         public string Email { get; set; }
 
-        [RegularExpression(@"^\d{5}-\d{3}$", 
-            ErrorMessage = "O CEP está com formato inválido")]
-        public string Cep { get; set; }
+        [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", 
+            ErrorMessage = "O CPF está com formato inválido")]
+        public string Cpf { get; set; }
         public DateTime? DataNascimento { get; set; }
 
         public int Idade

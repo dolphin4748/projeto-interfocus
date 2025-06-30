@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InterfocusConsole\InterfocusConsole.csproj" />
+    <ProjectReference Include="..\ProjetoConsole\ProjetoConsole.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace InterfocusConsole.Repository
+﻿namespace ProjetoConsole.Repository
 {
     public interface IRepository
     {

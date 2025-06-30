@@ -1,4 +1,4 @@
-﻿namespace InterfocusConsole.Interfaces
+﻿namespace ProjetoConsole.Interfaces
 {
     public interface IEntidade
     {

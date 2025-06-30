@@ -1,20 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using InterfocusConsole;
-using InterfocusConsole.Interfaces;
-using InterfocusConsole.Models;
-using InterfocusConsole.Repository.Implementations;
-using InterfocusConsole.Services;
+using ProjetoConsole;
+using ProjetoConsole.Interfaces;
+using ProjetoConsole.Models;
+using ProjetoConsole.Repository.Implementations;
+using ProjetoConsole.Services;
 
 // LINQ - Language Integrated Query
 
 //objeto - instancia de uma classe
-var servico =  new AlunoService(new RepositoryInMemory());
-var servico2 = new AlunoService(new RepositoryInMemory());
-var servico3 = new AlunoService(new RepositoryInMemory());
-var servico4 = new AlunoService(new RepositoryInMemory());
+var servico =  new ClienteService(new RepositoryInMemory());
+var servico2 = new ClienteService(new RepositoryInMemory());
+var servico3 = new ClienteService(new RepositoryInMemory());
+var servico4 = new ClienteService(new RepositoryInMemory());
 
 // classes diferentes com mesma caracteristica ou comportamento
-Metodos.PrintNome(new Aluno());
+Metodos.PrintNome(new Cliente());
 
 
 while (true)
@@ -36,23 +36,23 @@ while (true)
             Console.Write("Desconto: ");
             var desconto = double.Parse(Console.ReadLine());
 
-            var aluno = new Aluno()
+            var cliente = new Cliente()
             {
                 Nome = nome,
                 Id = codigo
             };
 
-            if (servico.Cadastrar(aluno, out _))
+            if (servico.Cadastrar(cliente, out _))
             {
-                Console.WriteLine("Aluno cadastrado com sucesso!");
+                Console.WriteLine("Cliente cadastrado com sucesso!");
             }
             else
             {
-                Console.WriteLine("Dados inválidos para cadastrar aluno");
+                Console.WriteLine("Dados inválidos para cadastrar cliente");
             }
             break;
         case 2:
-            Metodos.PrintarLista(servico4.Consultar(), "Aluno: ");
+            Metodos.PrintarLista(servico4.Consultar(), "Cliente: ");
             break;
         case 3: // label
             var pesquisa = Console.ReadLine();
@@ -63,25 +63,25 @@ while (true)
             Console.Write("Código: ");
             var codigoBusca = LerInteiro();
 
-            var alunoPesquisado = servico3.ConsultarPorCodigo(codigoBusca);
+            var clientePesquisado = servico3.ConsultarPorCodigo(codigoBusca);
 
-            if (alunoPesquisado == null)
+            if (clientePesquisado == null)
             {
-                Console.WriteLine("Aluno não encontrado");
+                Console.WriteLine("Cliente não encontrado");
             }
             else
             {
                 Console.Write("Nome: ");
                 var novoNome = Console.ReadLine();
                 //setnome
-                var oldNome = alunoPesquisado.Nome;
-                alunoPesquisado.Nome = novoNome;
-                if (!AlunoService.Validar(alunoPesquisado, out _))
+                var oldNome = clientePesquisado.Nome;
+                clientePesquisado.Nome = novoNome;
+                if (!ClienteService.Validar(clientePesquisado, out _))
                 {
-                    alunoPesquisado.Nome = oldNome;
+                    clientePesquisado.Nome = oldNome;
                 }
-                //alunoPesquisado.DataCadastro = DateTime.Now;
-                Console.WriteLine(alunoPesquisado.DataCadastro);
+                //clientePesquisado.DataCadastro = DateTime.Now;
+                Console.WriteLine(clientePesquisado.DataCadastro);
             }
             break;
     }
@@ -105,7 +105,7 @@ static int LerInteiro()
 
 class Metodos
 {
-    public static void PrintarLista(List<Aluno> lista, string prefix = "")
+    public static void PrintarLista(List<Cliente> lista, string prefix = "")
     {
         foreach (var item in lista)
         {
@@ -113,10 +113,10 @@ class Metodos
         }
     }
 
-    public static void PrintarLista(List<Aluno> alunos, bool header)
+    public static void PrintarLista(List<Cliente> clientes, bool header)
     {
         Console.WriteLine("codigo - nome - desconto");
-        PrintarLista(alunos);
+        PrintarLista(clientes);
     }
 
     public static void PrintNome(INomeavel objeto)

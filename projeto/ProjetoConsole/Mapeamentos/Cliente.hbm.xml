@@ -2,13 +2,13 @@
 <!--Mapear entidade curso para NHibernate-->
 <hibernate-mapping 
 	xmlns="urn:nhibernate-mapping-2.2"
-	namespace="InterfocusConsole.Models"
-	assembly="InterfocusConsole">
+	namespace="ProjetoConsole.Models"
+	assembly="ProjetoConsole">
 
-	<class name="Aluno" lazy="false" table="alunos">
+	<class name="Cliente" lazy="false" table="clientes">
 		<id name="Id" column="id" type="long">
 			<generator class="sequence">
-				<param name="sequence">alunos_seq</param>
+				<param name="sequence">clientes_seq</param>
 			</generator>
 		</id>
 
@@ -16,7 +16,7 @@
 		<property name="Email"	type="string" length="5000" />
 		<property name="DataNascimento" type="date"		not-null="false" />
 		<property name="DataCadastro"	type="DateTime" not-null="true" />
-		<property name="Cep"	type="string" not-null="false" />
+		<property name="Cpf"	type="string" not-null="false" />
 	
 	</class>
 	

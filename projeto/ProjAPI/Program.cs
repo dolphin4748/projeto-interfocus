@@ -1,6 +1,6 @@
-using InterfocusConsole.Repository;
-using InterfocusConsole.Repository.Implementations;
-using InterfocusConsole.Services;
+using ProjetoConsole.Repository;
+using ProjetoConsole.Repository.Implementations;
+using ProjetoConsole.Services;
 using NHibernate.Cfg;
 using System.Text.Json.Serialization;
 
@@ -20,7 +20,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<AlunoService>();
+builder.Services.AddTransient<ClienteService>();
 
 var isInMemory = builder.Configuration.GetValue("UseInMemory", false);
 if (isInMemory)

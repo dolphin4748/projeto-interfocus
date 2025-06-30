@@ -9,6 +9,6 @@
 		<property name="current_session_context_class">
 			NHibernate.Context.WcfOperationSessionContext
 		</property>
-		<mapping assembly="InterfocusConsole"/>
+		<mapping assembly="ProjetoConsole"/>
 	</session-factory>
 </hibernate-configuration>

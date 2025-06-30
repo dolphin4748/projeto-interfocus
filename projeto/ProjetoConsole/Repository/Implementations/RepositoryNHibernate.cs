@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InterfocusConsole.Repository.Implementations
+namespace ProjetoConsole.Repository.Implementations
 {
     public class RepositoryNHibernate : IRepository
     {

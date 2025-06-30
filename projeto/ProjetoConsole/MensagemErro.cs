@@ -1,4 +1,4 @@
-﻿namespace InterfocusConsole
+﻿namespace ProjetoConsole
 {
     public class MensagemErro
     {

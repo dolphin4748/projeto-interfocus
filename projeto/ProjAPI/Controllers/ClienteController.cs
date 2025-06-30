@@ -1,16 +1,16 @@
-﻿using InterfocusConsole;
-using InterfocusConsole.Models;
-using InterfocusConsole.Services;
+﻿using ProjetoConsole;
+using ProjetoConsole.Models;
+using ProjetoConsole.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TreinamentoAPI.Controllers
+namespace ProjAPI.Controllers
 {
-    [Route("api/aluno")]
-    public class AlunoController : ControllerBase
+    [Route("api/cliente")]
+    public class ClienteController : ControllerBase
     {
-        private readonly AlunoService servico;
+        private readonly ClienteService servico;
 
-        public AlunoController(AlunoService servico)
+        public ClienteController(ClienteService servico)
         {
             this.servico = servico;
         }
@@ -24,23 +24,23 @@ namespace TreinamentoAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Aluno aluno)
+        public IActionResult Post([FromBody] Cliente cliente)
         {
-            // AlunoService, AlunoBusiness
+            // ClienteService, ClienteBusiness
             // controllers: camada de acesso
             // services: camada de negócio
             // repositories: camada de dados
-            if (servico.Cadastrar(aluno, out List<MensagemErro> erros))
+            if (servico.Cadastrar(cliente, out List<MensagemErro> erros))
             {
-                return Ok(aluno);
+                return Ok(cliente);
             }
             return UnprocessableEntity(erros);
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] Aluno aluno)
+        public IActionResult Put([FromBody] Cliente cliente)
         {
-            var resultado = servico.Editar(aluno, out _);
+            var resultado = servico.Editar(cliente, out _);
             if (resultado == null)
             {
                 return NotFound();

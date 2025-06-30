@@ -1,7 +1,7 @@
 ﻿
-using InterfocusConsole.Interfaces;
+using ProjetoConsole.Interfaces;
 
-namespace InterfocusConsole.Repository.Implementations
+namespace ProjetoConsole.Repository.Implementations
 {
     public class RepositoryInMemory : IRepository, IDisposable
     {
