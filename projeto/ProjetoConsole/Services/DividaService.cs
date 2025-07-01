@@ -69,14 +69,22 @@ namespace ProjetoConsole.Services
 
         public List<Divida> Consultar(string pesquisa)
         {
-            bool FiltraLista(Divida item)
-            {
-                return item.Descricao.Contains(pesquisa);
-            }
             // lambda expression
             var resultado2 = repository
                 .Consultar<Divida>()
                 .Where(item => item.Descricao.Contains(pesquisa))
+                .OrderBy(item => item.Valor)
+                .Take(10)
+                .ToList();
+            return resultado2;
+        }
+
+        public List<Divida> ConsultarCliente(long pesquisa)
+        {
+            // lambda expression
+            var resultado2 = repository
+                .Consultar<Divida>()
+                .Where(item => item.ClienteId == pesquisa)
                 .OrderBy(item => item.Valor)
                 .Take(10)
                 .ToList();

@@ -62,9 +62,9 @@ namespace TreinamentoAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(long id)
+        public IActionResult GetByCliente(long id)
         {
-            var Divida = servico.ConsultarPorCodigo(id);
+            var Divida = servico.ConsultarCliente(id);
             if (Divida == null)
             {
                 return NotFound();

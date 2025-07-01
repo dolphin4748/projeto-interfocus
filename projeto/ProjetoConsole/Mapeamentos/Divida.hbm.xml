@@ -12,6 +12,7 @@
 			</generator>
 		</id>
 		<property name="Valor"		type="long" length="100" />
+		<property name="ClienteId"	type="long" length="100" />
 		<property name="Descricao"	type="string" length="5000" />
 		<property name="DataCadastro" type="DateTime" not-null="true"/>
 	</class>

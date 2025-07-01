@@ -74,10 +74,6 @@ namespace ProjetoConsole.Services
 
         public List<Cliente> Consultar(string pesquisa)
         {
-            bool FiltraLista(Cliente item)
-            {
-                return item.Nome.Contains(pesquisa);
-            }
             // lambda expression - LINQ
             var resultado2 = repository
                 .Consultar<Cliente>()

@@ -10,6 +10,8 @@ namespace ProjetoConsole.Models
         [Required]
         public long Valor { get; set; }
         [Required]
+        public long ClienteId { get; set; }
+        [Required]
         public string Descricao { get; set; }
 
         public DateTime DataCadastro { get; set; } = DateTime.Now;
