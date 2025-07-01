@@ -21,6 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<ClienteService>();
+builder.Services.AddTransient<DividaService>();
 
 var isInMemory = builder.Configuration.GetValue("UseInMemory", false);
 if (isInMemory)

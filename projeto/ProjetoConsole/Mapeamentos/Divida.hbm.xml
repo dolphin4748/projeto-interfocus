@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Mapear entidade curso para NHibernate-->
+<hibernate-mapping 
+	xmlns="urn:nhibernate-mapping-2.2"
+	namespace="ProjetoConsole.Models"
+	assembly="ProjetoConsole">
+
+	<class name="Divida" lazy="false" table="dividas">
+		<id name="Id" column="id" type="long">
+			<generator class="sequence">
+				<param name="sequence">dividas_seq</param>
+			</generator>
+		</id>
+		<property name="Valor"		type="long" length="100" />
+		<property name="Descricao"	type="string" length="5000" />
+		<property name="DataCadastro" type="DateTime" not-null="true"/>
+	</class>
+	
+</hibernate-mapping>
