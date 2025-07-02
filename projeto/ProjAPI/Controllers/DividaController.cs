@@ -16,12 +16,31 @@ namespace TreinamentoAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(string busca)
+        public IActionResult Get(string busca, long clienteid = 0)
         {
             if (string.IsNullOrEmpty(busca))
             {
+                if (clienteid > 0)
+                {
+                    var Divida = servico.ConsultarCliente(clienteid);
+                    if (Divida == null)
+                    {
+                        return NotFound();
+                    }
+                    return Ok(Divida);
+                }
                 return Ok(servico.Consultar());
             }
+            if (clienteid > 0)
+            {
+                var Divida = servico.ConsultarCliente(clienteid);
+                if (Divida == null)
+                {
+                    return NotFound();
+                }
+                return Ok(Divida);
+            }
+
             return Ok(servico.Consultar(busca));
         }
 
@@ -62,9 +81,9 @@ namespace TreinamentoAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetByCliente(long id)
+        public IActionResult GetById(long id)
         {
-            var Divida = servico.ConsultarCliente(id);
+            var Divida = servico.ConsultarPorCodigo(id);
             if (Divida == null)
             {
                 return NotFound();

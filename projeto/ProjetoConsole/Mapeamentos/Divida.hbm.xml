@@ -11,9 +11,10 @@
 				<param name="sequence">dividas_seq</param>
 			</generator>
 		</id>
-		<property name="Valor"		type="long" length="100" />
-		<property name="ClienteId"	type="long" length="100" />
+		<property name="Valor"		type="long" length="100" not-null="true"/>
+		<property name="ClienteId"	type="long" length="100" not-null="true"/>
 		<property name="Descricao"	type="string" length="5000" />
+		<property name="DataPagamento" type="DateTime" not-null="true"/>
 		<property name="DataCadastro" type="DateTime" not-null="true"/>
 	</class>
 	

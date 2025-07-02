@@ -14,6 +14,8 @@ namespace ProjetoConsole.Models
         [Required]
         public string Descricao { get; set; }
 
+        public DateTime DataPagamento { get; set; } = DateTime.Now;
+
         public DateTime DataCadastro { get; set; } = DateTime.Now;
     }
 }
