@@ -84,16 +84,26 @@ namespace ProjetoConsole.Services
             return resultado2;
         }
 
-        public List<Divida> ConsultarCliente(long pesquisa)
+        public List<Divida> ConsultarCliente(long pesquisa, string busca = "")
         {
-            // lambda expression
-            var resultado = repository
+            if (string.IsNullOrEmpty(busca))
+            {
+                var resultado = repository
+                    .Consultar<Divida>()
+                    .Where(item => item.ClienteId == pesquisa)
+                    .OrderByDescending(item => item.Valor)
+                    .Take(10)
+                    .ToList();
+                return resultado;
+            }
+            var resultado2 = repository
                 .Consultar<Divida>()
-                .Where(item => item.ClienteId == pesquisa)
+                .Where(item => item.ClienteId == pesquisa && item.Descricao.Contains(busca))
                 .OrderByDescending(item => item.Valor)
                 .Take(10)
                 .ToList();
-            return resultado;
+            return resultado2;
+    
         }
 
         public Divida ConsultarPorCodigo(long id)

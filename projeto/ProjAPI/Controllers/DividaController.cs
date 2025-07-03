@@ -33,14 +33,13 @@ namespace TreinamentoAPI.Controllers
             }
             if (clienteid > 0)
             {
-                var Divida = servico.ConsultarCliente(clienteid);
+                var Divida = servico.ConsultarCliente(clienteid, busca);
                 if (Divida == null)
                 {
                     return NotFound();
                 }
                 return Ok(Divida);
             }
-
             return Ok(servico.Consultar(busca));
         }
 
