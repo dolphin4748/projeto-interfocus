@@ -7,6 +7,7 @@ create table clientes (
 	nome varchar(100),
 	cpf varchar(20),
 	email text,
+	totaldivida numeric default 0,
 	datanascimento date,
 	datacadastro timestamp not null default now(),
 	primary key (id)
@@ -14,11 +15,42 @@ create table clientes (
 
 create table dividas (
 	id bigint not null default nextval('dividas_seq'),
-	valor integer not null,
+	valor numeric not null,
 	clienteid bigint not null,
 	descricao text,
 	datapagamento timestamp not null,
 	datacadastro timestamp not null default now(),
 	primary key (id),
-	FOREIGN KEY (clientesid) REFERENCES clientes(id)
+	FOREIGN KEY (clienteid) REFERENCES clientes(id)
 );
+
+CREATE OR REPLACE FUNCTION atualiza_totaldivida()
+RETURNS TRIGGER AS $$
+DECLARE
+  r RECORD;
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    r := OLD;
+  ELSE
+    r := NEW;
+  END IF;
+
+  UPDATE clientes
+  SET totaldivida = COALESCE((
+      SELECT SUM(valor)
+      FROM dividas
+      WHERE clienteid = r.clienteid
+    ), 0)
+  WHERE id = r.clienteid;
+
+  RETURN r;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_atualiza_totaldivida
+AFTER INSERT OR UPDATE OR DELETE ON dividas
+FOR EACH ROW
+EXECUTE FUNCTION atualiza_totaldivida();
+
+

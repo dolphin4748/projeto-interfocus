@@ -8,13 +8,14 @@ namespace ProjetoConsole.Models
     {
         public long Id { get; set; }
         [Required]
-        public long Valor { get; set; }
+        public float Valor { get; set; }
         [Required]
         public long ClienteId { get; set; }
         [Required]
         public string Descricao { get; set; }
 
         public DateTime DataPagamento { get; set; } = DateTime.Now;
+        [Required]
 
         public DateTime DataCadastro { get; set; } = DateTime.Now;
     }

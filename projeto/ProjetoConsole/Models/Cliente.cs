@@ -1,4 +1,5 @@
 ﻿using ProjetoConsole.Interfaces;
+using ProjetoConsole.Repository;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProjetoConsole.Models
@@ -10,9 +11,10 @@ namespace ProjetoConsole.Models
         public string Nome { get; set; }
         public string Email { get; set; }
 
-        [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", 
+        [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$",
             ErrorMessage = "O CPF está com formato inválido")]
         public string Cpf { get; set; }
+        public float TotalDivida { get; set; }
         public DateTime? DataNascimento { get; set; }
 
         public int Idade
@@ -38,6 +40,6 @@ namespace ProjetoConsole.Models
         {
             // getcodigo e getnome
             return $"{Id} - {Nome}"; // f"" python
-        }   
+        }
     }
 }

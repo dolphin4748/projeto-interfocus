@@ -45,25 +45,30 @@ namespace ProjetoConsole.Services
                 true);
             mensagens = new List<MensagemErro>();
 
-            foreach (var erro in erros)
-            {
-                var mensagem = new MensagemErro(
-                    erro.MemberNames.First(),
-                    erro.ErrorMessage);
+                foreach (var erro in erros)
+                {
+                    var mensagem = new MensagemErro(
+                        erro.MemberNames.First(),
+                        erro.ErrorMessage);
 
-                mensagens.Add(mensagem);
-                Console.WriteLine("{0}: {1}",
-                    erro.MemberNames.First(),
-                    erro.ErrorMessage);
-            }
+                    mensagens.Add(mensagem);
+                    Console.WriteLine("{0}: {1}",
+                        erro.MemberNames.First(),
+                        erro.ErrorMessage);
+                }
             //throw new Exception("dados invalidos!!!!");
+            Cliente cliente = repository.ConsultarPorId<Cliente>(divida.ClienteId);
+            if (cliente.TotalDivida + divida.Valor > 200) {
+                mensagens.Add(new MensagemErro("totalDivida", "Cliente ira exceder o limite de R$200"));
+                validation = false;
+            }
             return validation;
         }
 
         public List<Divida> Consultar()
         {
             return repository.Consultar<Divida>()
-                .OrderByDescending(c => c.Id)
+                .OrderByDescending(c => c.Valor)
                 .ToList();
         }
 
@@ -73,7 +78,7 @@ namespace ProjetoConsole.Services
             var resultado2 = repository
                 .Consultar<Divida>()
                 .Where(item => item.Descricao.Contains(pesquisa))
-                .OrderBy(item => item.Valor)
+                .OrderByDescending(item => item.Valor)
                 .Take(10)
                 .ToList();
             return resultado2;
@@ -82,13 +87,13 @@ namespace ProjetoConsole.Services
         public List<Divida> ConsultarCliente(long pesquisa)
         {
             // lambda expression
-            var resultado2 = repository
+            var resultado = repository
                 .Consultar<Divida>()
                 .Where(item => item.ClienteId == pesquisa)
-                .OrderBy(item => item.Valor)
+                .OrderByDescending(item => item.Valor)
                 .Take(10)
                 .ToList();
-            return resultado2;
+            return resultado;
         }
 
         public Divida ConsultarPorCodigo(long id)
@@ -104,8 +109,10 @@ namespace ProjetoConsole.Services
             {
                 return null;
             }
+            existente.ClienteId = divida.ClienteId;
             existente.Valor = divida.Valor;
             existente.Descricao = divida.Descricao;
+            existente.DataPagamento = divida.DataPagamento;
             try
             {
                 using var transacao = repository.IniciarTransacao();
