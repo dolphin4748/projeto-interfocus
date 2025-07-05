@@ -8,10 +8,10 @@ export function Menu() {
                     <Link to="/">Home</Link>
                 </li>
                 <li>
-                    <Link to="/cursos">Cursos</Link>
+                    <Link to="/clientes">Clientes</Link>
                 </li>
                 <li>
-                    <Link to="/alunos">Alunos</Link>
+                    <Link to="/dividas">Dividas</Link>
                 </li>
             </ul>
         </nav>)

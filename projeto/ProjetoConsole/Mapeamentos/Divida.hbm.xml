@@ -14,6 +14,7 @@
 		<property name="Valor"		type="float" length="100" not-null="true"/>
 		<property name="ClienteId"	type="long" length="100" not-null="true"/>
 		<property name="Descricao"	type="string" length="5000" />
+		<property name="Situacao"	type="bool" />
 		<property name="DataPagamento" type="DateTime" not-null="true"/>
 		<property name="DataCadastro" type="DateTime" not-null="true"/>
 	</class>

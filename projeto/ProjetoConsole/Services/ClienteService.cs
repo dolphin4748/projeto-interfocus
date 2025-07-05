@@ -68,19 +68,24 @@ namespace ProjetoConsole.Services
 
         public List<Cliente> Consultar()
         {
-            return repository.Consultar<Cliente>().ToList();
+            var resultado = repository
+                .Consultar<Cliente>()
+                .OrderByDescending(item => item.TotalDivida)
+                .Take(10)
+                .ToList();
+            return resultado;
         }
 
         public List<Cliente> Consultar(string pesquisa)
         {
             // lambda expression - LINQ
-            var resultado2 = repository
+            var resultado = repository
                 .Consultar<Cliente>()
                 .Where(item => item.Nome.Contains(pesquisa))
-                .OrderBy(item => item.Nome)
+                .OrderByDescending(item => item.TotalDivida)
                 .Take(10)
                 .ToList();
-            return resultado2;
+            return resultado;
         }
 
         public Cliente ConsultarPorCodigo(long codigo)

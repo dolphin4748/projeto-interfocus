@@ -3,7 +3,7 @@ using ProjetoConsole.Models;
 using ProjetoConsole.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TreinamentoAPI.Controllers
+namespace ProjAPI.Controllers
 {
     [Route("api/[controller]")]
     public class DividaController : ControllerBase

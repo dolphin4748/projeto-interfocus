@@ -1,92 +1,76 @@
 import { useEffect, useState } from "react";
+import { listarClientes } from "../../services/clienteService";
+import { useNavigation } from "simple-react-routing";
 
 export default function HomePage() {
-  let contador = 0;
-  const [count, setCount] = useState(0); // [valor, setarValor]
-  console.log("Carregando tela com contador: ", count);
+const [clientes, setClientes] = useState([]);
 
-  const stateCount2 = useState();
-  const count2 = stateCount2[0];
-  const setCount2 = stateCount2[1];
+    const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    contador++;
-    console.log("USE EFFECT VAZiO")
-  }, []);
+    const { navigateTo } = useNavigation();
 
-  useEffect(() => {
-    contador++;
-    console.log("USE EFFECT COUNT")
-  }, [count]);
+    const fetchData = async () => {
+        const resultado = await listarClientes(search);
+        if (resultado.status == 200) {
+            setClientes(resultado.data);
+        }
+    }
 
-  const printValor = () => {
-    alert(contador);
-  }
+    useEffect(() => {
+        // debounce
+        var timeout = setTimeout(() => {
+            fetchData();
+        }, 1000);
 
-  return (<>
-    <h1>Olá, mundo! {contador}</h1>
-    <h2>Subtitulo</h2>
-    <h3>Mais um subtitulo</h3>
-    <button onClick={() => setCount(count + 1)}>Contador {count}</button>
-    <a href="./pagina2.html">Página 2</a>
-    <a href="./cursos.html">Cursos</a>
-    <button onClick={printValor}>Print valor</button>
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [search]);
 
-    <div>
-      <p>Esse é um paragrafo</p>
-      <a href="https://unimar.edu.br" target="_blank">Site da Unimar</a>
-      <Formulario></Formulario>
-      <Formulario></Formulario>
-      <Formulario></Formulario>
+    return <div>
+        <div className="row">
+            <label>Pesquisa: </label>
+            <input type="search"
+                value={search}
+                onChange={(e) =>
+                    setSearch(e.target.value)
+                } />
+
+            <button
+                //onClick={(e) => navigateTo(e, "/clientes/novo")}
+                type="button">Novo</button>
+        </div>
+        <div className="grid-cards">
+            {clientes.map(a =>
+                <ClienteCard key={a.id} cliente={a}></ClienteCard>)}
+        </div>
     </div>
-    <div>
-      <ol>
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-      </ol>
-      <ul>
-        <li>Item A</li>
-        <li>Item B</li>
-        <li>Item C</li>
-
-      </ul>
-    </div>
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Idade</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Rodrigo teste</td>
-            <td>30</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Fulano de tal</td>
-            <td>20</td>
-          </tr>
-        </tbody>
-      </table>
-    </div >
-  </>
-  )
 }
 
-export function Formulario() {
-  return (<form>
-    <label>Nome:</label><input type="text" />
-    <label>Email:</label><input type="email" />
-    <label>Cor:</label><input type="color" />
-    <label>Data:</label><input type="date" />
-    <label>Idade:</label><input type="number" />
-    <label>Arquivo:</label><input type="file" />
-    <button type="submit">Enviar</button>
-  </form>)
+function ClienteCard({ cliente }) {
+
+    const { navigateTo } = useNavigation();
+
+    return <div class="card"
+        //onClick={(e) => navigateTo(e, "/clientes/edit/" + cliente.id)}
+    >
+        <h4>{cliente.nome}</h4>
+        <ul>
+            <li>
+                <img height="72" src={cliente.foto}></img>
+            </li>
+            <li>
+                <strong>ID:</strong> {cliente.id}
+            </li>
+            <li>
+                <strong>Idade:</strong> {cliente.idade}
+            </li>
+            <li>
+                <strong>E-mail:</strong> {cliente.email}
+            </li>
+            <li>
+                <strong>Total em Divida:</strong> R${cliente.totalDivida}
+            </li>
+        </ul>
+    </div>
 }

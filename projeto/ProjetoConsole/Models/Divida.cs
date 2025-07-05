@@ -13,7 +13,7 @@ namespace ProjetoConsole.Models
         public long ClienteId { get; set; }
         [Required]
         public string Descricao { get; set; }
-
+        public bool Situacao { get; set; }
         public DateTime DataPagamento { get; set; } = DateTime.Now;
         [Required]
 

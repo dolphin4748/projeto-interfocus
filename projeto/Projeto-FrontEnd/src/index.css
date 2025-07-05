@@ -17,13 +17,13 @@ h2 {
 }
 
 table {
-    background-color: #f9f900;
+    background-color: gray;
     color: white;
     width: 100%;
 }
 
 thead {
-    background-color: #6538d5;
+    background-color: black;
 }
 
 thead th {
@@ -33,11 +33,12 @@ thead th {
 
 tbody td {
     padding: 4px;
-    color: black;
+    color: white;
+    border: 1px solid black;
 }
 
 tbody tr:hover {
-    background-color: #999;
+    background-color: black;
     cursor: pointer;
 }
 
@@ -161,6 +162,7 @@ main {
     background-color: black;
     color: white;
     transition: background-color 2s ease;
+    transition: color 2s ease;
 }
 
 .card h4 {

@@ -121,6 +121,7 @@ namespace ProjetoConsole.Services
             }
             existente.ClienteId = divida.ClienteId;
             existente.Valor = divida.Valor;
+            existente.Situacao = divida.Situacao;
             existente.Descricao = divida.Descricao;
             existente.DataPagamento = divida.DataPagamento;
             try

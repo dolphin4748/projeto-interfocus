@@ -4,11 +4,11 @@ create sequence contas_seq;
 
 create table clientes (
 	id bigint not null default nextval('clientes_seq'),
-	nome varchar(100),
-	cpf varchar(20),
+	nome varchar(100) not null,
+	cpf varchar(20) not null,
 	email text,
 	totaldivida numeric default 0,
-	datanascimento date,
+	datanascimento date not null,
 	datacadastro timestamp not null default now(),
 	primary key (id)
 );
@@ -18,7 +18,8 @@ create table dividas (
 	valor numeric not null,
 	clienteid bigint not null,
 	descricao text,
-	datapagamento timestamp not null,
+	situacao bool not null default false,
+	datapagamento date not null,
 	datacadastro timestamp not null default now(),
 	primary key (id),
 	FOREIGN KEY (clienteid) REFERENCES clientes(id)
@@ -39,7 +40,7 @@ BEGIN
   SET totaldivida = COALESCE((
       SELECT SUM(valor)
       FROM dividas
-      WHERE clienteid = r.clienteid
+      WHERE clienteid = r.clienteid and situacao = false
     ), 0)
   WHERE id = r.clienteid;
 
