@@ -17,6 +17,8 @@ export default function DividaPage() {
 
     const params = new URLSearchParams(window.location.search);
 
+    const [erros, setErros] = useState([]);
+
     const [search, setSearch] = useState(params.get("q"));
 
     const [cliente, setCliente] = useState(params.get("q"));
@@ -49,6 +51,10 @@ export default function DividaPage() {
         if (resultado.status == 200) {
             setOpen(false);
             fetchData();
+        }else {
+            if (resultado.status == 422) {
+                setErros(resultado.data);
+            }
         }
     }
 
@@ -68,6 +74,17 @@ export default function DividaPage() {
     useEffect(() => {
         fetchData();
     }, [search, cliente]);
+
+    useEffect(() => {
+        var timeout = setTimeout(() => {
+            fetchData();
+            setErros([]);
+        }, 5000);
+
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [erros]);
 
     const selecionarLinha = async (divida) => {
         const resultado = await getDividaById(divida.id);
@@ -140,6 +157,9 @@ export default function DividaPage() {
                 <textarea defaultValue={selected?.descricao} required name="descricao"></textarea>
                 <label>Data de pagamento:</label>
                 <input defaultValue={selected?.dataPagamento.split("T")[0]} required name="data-pagamento" type="date" />
+                <div className="column">
+                    {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
+                </div>
                 <div className="row">
                     <button type="submit">Cadastrar</button>
                     <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>

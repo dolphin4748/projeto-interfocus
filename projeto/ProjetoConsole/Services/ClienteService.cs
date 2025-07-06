@@ -105,6 +105,7 @@ namespace ProjetoConsole.Services
             existente.Nome = cliente.Nome;
             existente.Email = cliente.Email;
             existente.Cpf = cliente.Cpf;
+            existente.DataNascimento = cliente.DataNascimento;
 
             var valido = Validar(cliente, out mensagens);
             if (valido)

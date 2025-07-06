@@ -1,18 +1,50 @@
 import { useEffect, useState } from "react";
-import { listarClientes } from "../../services/clienteService";
-import { useNavigation } from "simple-react-routing";
+import { listarClientes, salvarCliente, getClienteById } from "../../services/clienteService";
+import Modal from "../../components/Modal";
 
 export default function ClientePage() {
     const [clientes, setClientes] = useState([]);
 
     const [search, setSearch] = useState("");
 
-    const { navigateTo } = useNavigation();
+    const [open, setOpen] = useState(false);
+
+    const [selected, setSelected] = useState(null);
+
+    const [erros, setErros] = useState([]);
+
+    const params = new URLSearchParams(window.location.search);
 
     const fetchData = async () => {
         const resultado = await listarClientes(search);
         if (resultado.status == 200) {
             setClientes(resultado.data);
+        }
+    }
+
+    const submitForm = async (event) => {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+
+        const cliente = {
+            nome: formData.get("nome"),
+            email: formData.get("email"),
+            cpf: formData.get("cpf"),
+            dataNascimento: formData.get("data-nascimento")
+        };
+        if (selected?.id) {
+            cliente.id = selected.id;
+        }
+        const resultado = await salvarCliente(cliente);
+        if (resultado.status == 200) {
+            setOpen(false);
+            fetchData();
+        }else {
+            if (resultado.status == 422) {
+                setErros(resultado.data);
+            }
         }
     }
 
@@ -27,6 +59,25 @@ export default function ClientePage() {
         }
     }, [search]);
 
+    useEffect(() => {
+        var timeout = setTimeout(() => {
+            fetchData();
+            setErros([]);
+        }, 5000);
+
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [erros]);
+
+    const selecionarLinha = async (cliente) => {
+        const resultado = await getClienteById(cliente.id);
+        if (resultado.status == 200) {
+            setSelected(resultado.data);
+            setOpen(true);
+        }
+    };
+
     return <div>
         <h1>Clientes</h1>
         <div className="row">
@@ -37,9 +88,10 @@ export default function ClientePage() {
                     setSearch(e.target.value)
                 } />
 
-            <button
-                //onClick={(e) => navigateTo(e, "/clientes/novo")}
-                type="button">Novo</button>
+            <button type="button" onClick={() => {
+                setOpen(true);
+                setSelected(null);
+            }}>Novo Cliente</button>
         </div>
         <table id="tabela-clientes">
             <thead>
@@ -47,6 +99,7 @@ export default function ClientePage() {
                     <th>Id</th>
                     <th>Nome</th>
                     <th>Email</th>
+                    <th>CPF</th>
                     <th>Idade</th>
                     <th>Total em divida</th>
                     <th>Data Cadastro</th>
@@ -62,6 +115,25 @@ export default function ClientePage() {
                 }
             </tbody>
         </table>
+        <Modal open={open}>
+                <form method="post" onSubmit={submitForm}>
+                    <label>Nome:</label>
+                    <input defaultValue={selected?.nome} required type="text" name="nome"/>
+                    <label>Email:</label>
+                    <input defaultValue={selected?.email} type="text" name="email"/>
+                    <label>CPF:</label>
+                    <input defaultValue={selected?.cpf} required type="text" name="cpf" />
+                    <label>Data de nascimento:</label>
+                    <input defaultValue={selected?.dataNascimento.split("T")[0]} required name="data-nascimento" type="date"/>
+                    <div className="column">
+                        {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
+                    </div>
+                    <div className="row">
+                        <button type="submit">Cadastrar</button>
+                        <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
+                    </div>
+                </form>
+        </Modal>
     </div>
 }
 
@@ -72,6 +144,7 @@ function LinhaCliente({ cliente, onClick }) {
         <td>{cliente.id}</td>
         <td>{cliente.nome}</td>
         <td>{cliente.email}</td>
+        <td>{cliente.cpf}</td>
         <td>{cliente.idade}</td>
         <td>{cliente.totalDivida}</td>
         <td>{data.toLocaleString()}</td>
