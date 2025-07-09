@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { getDividaById, listarDividas, salvarDivida } from "../../services/dividaService";
+import { listarClientes, getClienteById } from "../../services/clienteService";
 import Modal from "../../components/Modal";
 import { useRouter } from "simple-react-routing"
 
@@ -7,11 +8,13 @@ export default function DividaPage() {
 
     const [dividas, setDividas] = useState([]);
 
-    const { pathParams } = useRouter();
+    const [clientes, setClientes] = useState([]);
 
     const [open, setOpen] = useState(false);
 
     const [selected, setSelected] = useState(null);
+
+    const [cltid, setCltid] = useState(null)
 
     const [situacao, setSituacao] = useState("");
 
@@ -25,8 +28,12 @@ export default function DividaPage() {
 
     const fetchData = async () => {
         const resultado = await listarDividas(search, cliente);
+        const resultado2 = await listarClientes("")
         if (resultado.status == 200) {
             setDividas(resultado.data);
+        }
+        if (resultado2.status == 200) {
+            setClientes(resultado2.data);
         }
     }
 
@@ -57,27 +64,28 @@ export default function DividaPage() {
             }
         }
     }
-
-    useEffect(() => {
-        if (pathParams["id"]) {
-            selecionarLinha({ id: pathParams["id"] })
-        }
-    }, [])
-
     useEffect(() => {
         if (selected) {
             setSituacao(selected.situacao ? "true" : "");
+            setCltid(selected.clienteId);
+        }else {
+            setSituacao("");
+            setCltid(1)
         }
     }, [selected]);
-
-
-    useEffect(() => {
-        fetchData();
-    }, [search, cliente]);
 
     useEffect(() => {
         var timeout = setTimeout(() => {
             fetchData();
+        }, 500);
+
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [search, cliente]);
+
+    useEffect(() => {
+        var timeout = setTimeout(() => {
             setErros([]);
         }, 5000);
 
@@ -95,7 +103,7 @@ export default function DividaPage() {
     };
 
     return (<>
-        <h1>DIVIDAS: {search}{cliente}</h1>
+        <h1>DIVIDAS</h1>
 
         <div className="row">
             <label>Pesquisa:</label>
@@ -107,13 +115,14 @@ export default function DividaPage() {
                 }
             />
             <label>Pesquisa por cliente:</label>
-            <input name="cliente"
-                type="search"
-                value={cliente}
-                onChange={(e) =>
-                    setCliente(e.target.value)
+            <select name="cliente" value={cliente} onChange={(e) => setCliente(e.target.value)}>
+                <option value="0">nenhum</option>
+                {
+                    clientes.map(clt =>
+                        <option key={clt.id} value={clt.id}>{clt.nome}</option>
+                    )
                 }
-            />
+            </select>
             <button type="button" onClick={() => {
                 setOpen(true);
                 setSelected(null);
@@ -135,6 +144,7 @@ export default function DividaPage() {
                 {
                     dividas.map(divida =>
                         <LinhaDivida key={divida.id}
+                            clientes={clientes}
                             divida={divida}
                             onClick={() => selecionarLinha(divida)}></LinhaDivida>
                     )
@@ -147,7 +157,13 @@ export default function DividaPage() {
                 <label>Valor:</label>
                 <input defaultValue={selected?.valor} required type="number" name="valor"/>
                 <label>Cliente:</label>
-                <input defaultValue={selected?.clienteId} required type="number" name="cliente"/>
+                <select value={cltid} onChange={(e) => setCltid(e.target.value)} required name="cliente">
+                    {
+                        clientes.map(clt =>
+                            <option key={clt.id} value={clt.id}>{clt.nome}</option>
+                        )
+                    }
+                </select>
                 <label>Situação</label>
                 <select value={situacao} onChange={(e) => setSituacao(e.target.value)} name="situacao">
                     <option value="">Pendente</option>
@@ -169,14 +185,15 @@ export default function DividaPage() {
     </>)
 }
 
-function LinhaDivida({ divida, onClick }) {
+function LinhaDivida({ clientes, divida, onClick }) {
     const data = new Date(divida.dataCadastro);
     const situacao = divida.situacao? "Paga" : "Pendente";
+    clientes.sort((a, b) => a.id - b.id)
 
     return (<tr onClick={onClick}>
         <td>{divida.id}</td>
         <td>{divida.valor}</td>
-        <td>{divida.clienteId}</td>
+        <td>{clientes[divida.clienteId-1].nome}</td>
         <td>{situacao.toLocaleString()}</td>
         <td>{new Date(divida.dataPagamento).toLocaleString()}</td>
         <td>{data.toLocaleString()}</td>

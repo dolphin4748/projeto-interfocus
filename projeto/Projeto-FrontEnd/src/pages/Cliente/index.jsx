@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { listarClientes, salvarCliente, getClienteById } from "../../services/clienteService";
 import Modal from "../../components/Modal";
 
@@ -12,6 +12,19 @@ export default function ClientePage() {
     const [selected, setSelected] = useState(null);
 
     const [erros, setErros] = useState([]);
+
+    const [cpf, setCpf] = useReducer(
+        (oldValue, newValue) => {
+            if (newValue) {
+                const apenasDigitos =
+                    newValue.replace(/[^\d]/g, "").substr(-11);
+                const valorMascarado = apenasDigitos
+                    .replace(/(\d{3})(\d)/, "$1.$2")
+                    .replace(/(\d{3})(\d)/, "$1.$2")
+                    .replace(/(\d{3})(\d{2})$/, "$1-$2");
+                return valorMascarado;
+            }
+        }, "");
 
     const params = new URLSearchParams(window.location.search);
 
@@ -49,10 +62,9 @@ export default function ClientePage() {
     }
 
     useEffect(() => {
-        // debounce
         var timeout = setTimeout(() => {
             fetchData();
-        }, 1000);
+        }, 500);
 
         return () => {
             clearTimeout(timeout);
@@ -61,7 +73,6 @@ export default function ClientePage() {
 
     useEffect(() => {
         var timeout = setTimeout(() => {
-            fetchData();
             setErros([]);
         }, 5000);
 
@@ -122,7 +133,15 @@ export default function ClientePage() {
                     <label>Email:</label>
                     <input defaultValue={selected?.email} type="text" name="email"/>
                     <label>CPF:</label>
-                    <input defaultValue={selected?.cpf} required type="text" name="cpf" />
+                    <input
+                        value={cpf}
+                        onKeyDown={(e) => {
+                            if (e.key.length == 1 && !e.key.match(/\d/)) {
+                                e.preventDefault();
+                            }
+                        }}
+                        onChange={(e) => setCpf(e.target.value)}
+                        defaultValue={selected?.cpf} required type="text" name="cpf"/>
                     <label>Data de nascimento:</label>
                     <input defaultValue={selected?.dataNascimento.split("T")[0]} required name="data-nascimento" type="date"/>
                     <div className="column">
