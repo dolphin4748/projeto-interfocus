@@ -79,7 +79,6 @@ namespace ProjetoConsole.Services
                 .Consultar<Divida>()
                 .Where(item => item.Descricao.Contains(pesquisa))
                 .OrderByDescending(item => item.Valor)
-                .Take(10)
                 .ToList();
             return resultado2;
         }
@@ -92,7 +91,6 @@ namespace ProjetoConsole.Services
                     .Consultar<Divida>()
                     .Where(item => item.ClienteId == pesquisa)
                     .OrderByDescending(item => item.Valor)
-                    .Take(10)
                     .ToList();
                 return resultado;
             }
@@ -100,7 +98,6 @@ namespace ProjetoConsole.Services
                 .Consultar<Divida>()
                 .Where(item => item.ClienteId == pesquisa && item.Descricao.Contains(busca))
                 .OrderByDescending(item => item.Valor)
-                .Take(10)
                 .ToList();
             return resultado2;
     

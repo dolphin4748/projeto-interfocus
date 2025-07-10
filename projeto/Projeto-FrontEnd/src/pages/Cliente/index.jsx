@@ -1,6 +1,8 @@
-import { useEffect, useState, useReducer } from "react";
+import { useEffect, useState, useReducer, useMemo } from "react";
 import { listarClientes, salvarCliente, getClienteById } from "../../services/clienteService";
 import Modal from "../../components/Modal";
+
+const tamPagina = 10;
 
 export default function ClientePage() {
     const [clientes, setClientes] = useState([]);
@@ -27,6 +29,16 @@ export default function ClientePage() {
         }, "");
 
     const params = new URLSearchParams(window.location.search);
+
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    
+    const clientesAtual = useMemo(() => {
+        const primeiroIdx = (paginaAtual - 1) * tamPagina;
+        const ultimoIdx = primeiroIdx + tamPagina;
+        return clientes.slice(primeiroIdx, ultimoIdx);
+    }, [paginaAtual, clientes]);
+
+    const totalPaginas = Math.ceil(clientes.length / tamPagina);
 
     const fetchData = async () => {
         const resultado = await listarClientes(search);
@@ -118,7 +130,7 @@ export default function ClientePage() {
             </thead>
             <tbody>
                 {
-                    clientes.map(cliente =>
+                    clientesAtual.map(cliente =>
                         <LinhaCliente key={cliente.id}
                             cliente={cliente}
                             onClick={() => selecionarLinha(cliente)}></LinhaCliente>
@@ -126,6 +138,36 @@ export default function ClientePage() {
                 }
             </tbody>
         </table>
+
+        <div className="pagination">
+            <button
+                onClick={() => setPaginaAtual(p => Math.max(p - 1, 1))}
+                disabled={paginaAtual === 1}>
+                ← Anterior
+            </button>
+            {[...Array(totalPaginas)].map((_, idx) => {
+                const page = idx + 1;
+                return (
+                    <button
+                    key={page}
+                    onClick={() => setPaginaAtual(page)}
+                    style={{
+                        fontWeight: page === paginaAtual ? 'bold' : 'normal',
+                        filter: page === paginaAtual ? 'brightness(0.5)' : 'brightness(1)',
+                    }}
+                    >
+                    {page}
+                    </button>
+                );
+            })}
+            <button
+                onClick={() => setPaginaAtual(p => Math.min(p + 1, totalPaginas))}
+                disabled={paginaAtual === totalPaginas}
+                >
+                Próximo →
+            </button>
+        </div>
+
         <Modal open={open}>
                 <form method="post" onSubmit={submitForm}>
                     <label>Nome:</label>

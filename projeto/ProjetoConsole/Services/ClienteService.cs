@@ -71,7 +71,6 @@ namespace ProjetoConsole.Services
             var resultado = repository
                 .Consultar<Cliente>()
                 .OrderByDescending(item => item.TotalDivida)
-                .Take(10)
                 .ToList();
             return resultado;
         }
@@ -83,7 +82,6 @@ namespace ProjetoConsole.Services
                 .Consultar<Cliente>()
                 .Where(item => item.Nome.Contains(pesquisa))
                 .OrderByDescending(item => item.TotalDivida)
-                .Take(10)
                 .ToList();
             return resultado;
         }

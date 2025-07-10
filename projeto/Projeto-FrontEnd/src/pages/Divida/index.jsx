@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { getDividaById, listarDividas, salvarDivida } from "../../services/dividaService";
-import { listarClientes, getClienteById } from "../../services/clienteService";
+import { listarClientes} from "../../services/clienteService";
 import Modal from "../../components/Modal";
-import { useRouter } from "simple-react-routing"
+
+const tamPagina = 10;
 
 export default function DividaPage() {
 
@@ -25,6 +26,16 @@ export default function DividaPage() {
     const [search, setSearch] = useState(params.get("q"));
 
     const [cliente, setCliente] = useState(params.get("q"));
+
+    const [paginaAtual, setPaginaAtual] = useState(1);
+
+    const dividasAtual = useMemo(() => {
+        const primeiroIdx = (paginaAtual - 1) * tamPagina;
+        const ultimoIdx = primeiroIdx + tamPagina;
+        return dividas.slice(primeiroIdx, ultimoIdx);
+    }, [paginaAtual, dividas]);
+
+    const totalPaginas = Math.ceil(dividas.length / tamPagina);
 
     const fetchData = async () => {
         const resultado = await listarDividas(search, cliente);
@@ -85,6 +96,10 @@ export default function DividaPage() {
     }, [search, cliente]);
 
     useEffect(() => {
+        setPaginaAtual(1);
+    }, [clientes]);
+
+    useEffect(() => {
         var timeout = setTimeout(() => {
             setErros([]);
         }, 5000);
@@ -142,7 +157,7 @@ export default function DividaPage() {
             </thead>
             <tbody>
                 {
-                    dividas.map(divida =>
+                    dividasAtual.map(divida =>
                         <LinhaDivida key={divida.id}
                             clientes={clientes}
                             divida={divida}
@@ -151,6 +166,34 @@ export default function DividaPage() {
                 }
             </tbody>
         </table>
+        <div className="pagination">
+            <button
+                onClick={() => setPaginaAtual(p => Math.max(p - 1, 1))}
+                disabled={paginaAtual === 1}>
+                ← Anterior
+            </button>
+            {[...Array(totalPaginas)].map((_, idx) => {
+                const page = idx + 1;
+                return (
+                    <button
+                    key={page}
+                    onClick={() => setPaginaAtual(page)}
+                    style={{
+                        fontWeight: page === paginaAtual ? 'bold' : 'normal',
+                        filter: page === paginaAtual ? 'brightness(0.5)' : 'brightness(1)',
+                    }}
+                    >
+                    {page}
+                    </button>
+                );
+            })}
+            <button
+                onClick={() => setPaginaAtual(p => Math.min(p + 1, totalPaginas))}
+                disabled={paginaAtual === totalPaginas}
+                >
+                Próximo →
+            </button>
+        </div>
 
         <Modal open={open}>
             <form method="post" onSubmit={submitForm}>
