@@ -2,18 +2,24 @@ import { useEffect, useState, useReducer, useMemo } from "react";
 import { listarClientes, salvarCliente, getClienteById } from "../../services/clienteService";
 import Modal from "../../components/Modal";
 
-const tamPagina = 10;
+const tamPagina = 9;
 
 export default function ClientePage() {
     const [clientes, setClientes] = useState([]);
+
+    const [lixeira, setLixeira] = useState([]);
 
     const [search, setSearch] = useState("");
 
     const [open, setOpen] = useState(false);
 
+    const [abriLixeira, setAbrirLixeira] = useState(false)
+
     const [selected, setSelected] = useState(null);
 
     const [erros, setErros] = useState([]);
+
+    const [apagar, setApagar] = useState(false)
 
     const [cpf, setCpf] = useReducer(
         (oldValue, newValue) => {
@@ -40,10 +46,22 @@ export default function ClientePage() {
 
     const totalPaginas = Math.ceil(clientes.length / tamPagina);
 
+    const lixeiraAtual = useMemo(() => {
+        const primeiroIdx = (paginaAtual - 1) * tamPagina;
+        const ultimoIdx = primeiroIdx + tamPagina;
+        return lixeira.slice(primeiroIdx, ultimoIdx);
+    }, [paginaAtual, lixeira]);
+
+    const paginasLixeira = Math.ceil(clientes.length / tamPagina);
+
     const fetchData = async () => {
         const resultado = await listarClientes(search);
+        const resultado2 = await listarClientes(search, true)
         if (resultado.status == 200) {
             setClientes(resultado.data);
+        }
+        if (resultado2.status == 200) {
+            setLixeira(resultado2.data)
         }
     }
 
@@ -57,7 +75,8 @@ export default function ClientePage() {
             nome: formData.get("nome"),
             email: formData.get("email"),
             cpf: formData.get("cpf"),
-            dataNascimento: formData.get("data-nascimento")
+            dataNascimento: formData.get("data-nascimento"),
+            ativo: apagar ? false : true
         };
         if (selected?.id) {
             cliente.id = selected.id;
@@ -70,7 +89,9 @@ export default function ClientePage() {
             if (resultado.status == 422) {
                 setErros(resultado.data);
             }
+            setErros(resultado.data);
         }
+        setApagar(false)
     }
 
     useEffect(() => {
@@ -93,6 +114,14 @@ export default function ClientePage() {
         }
     }, [erros]);
 
+    useEffect(() => {
+        if (selected) {
+            setCpf(selected.cpf);
+        } else {
+            setCpf("");
+        }
+    }, [selected])
+
     const selecionarLinha = async (cliente) => {
         const resultado = await getClienteById(cliente.id);
         if (resultado.status == 200) {
@@ -103,6 +132,13 @@ export default function ClientePage() {
 
     return <div>
         <h1>Clientes</h1>
+
+        <div className="row-end">
+            <button type="button" onClick={() => {
+                setAbrirLixeira(true);
+            }}>Abrir Lixeira</button>
+        </div>
+
         <div className="row">
             <label>Pesquisa: </label>
             <input type="search"
@@ -114,30 +150,13 @@ export default function ClientePage() {
             <button type="button" onClick={() => {
                 setOpen(true);
                 setSelected(null);
+                setCpf("")
             }}>Novo Cliente</button>
         </div>
-        <table id="tabela-clientes">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>CPF</th>
-                    <th>Idade</th>
-                    <th>Total em divida</th>
-                    <th>Data Cadastro</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    clientesAtual.map(cliente =>
-                        <LinhaCliente key={cliente.id}
-                            cliente={cliente}
-                            onClick={() => selecionarLinha(cliente)}></LinhaCliente>
-                    )
-                }
-            </tbody>
-        </table>
+        <div className="grid-cards">
+            {clientesAtual.map(cliente =>
+                <ClienteCard key={cliente.id} cliente={cliente} onClick={() => selecionarLinha(cliente)}></ClienteCard>)}
+        </div>
 
         <div className="pagination">
             <button
@@ -168,12 +187,79 @@ export default function ClientePage() {
             </button>
         </div>
 
+        <Modal open={abriLixeira}>
+                <div className="column">
+                    <div className="row">
+                        <label style={{backgroundColor: "white", padding: 4, borderRadius: 4}}>Pesquisa: </label>
+                        <input type="search"
+                            value={search}
+                            onChange={(e) =>
+                                setSearch(e.target.value)
+                            } />
+                        <div className="row-end">
+                            <button type="reset" onClick={() => setAbrirLixeira(false)}>fechar</button> 
+                        </div>
+                    </div>
+                <table id="tabela-clientes">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>CPF</th>
+                            <th>Idade</th>
+                            <th>Total em divida</th>
+                            <th>Data Cadastro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            lixeiraAtual.map(cliente =>
+                                <LinhaCliente key={cliente.id}
+                                    cliente={cliente}
+                                    onClick={() => selecionarLinha(cliente)}></LinhaCliente>
+                            )
+                        }
+                    </tbody>
+                </table>
+                <div className="pagination">
+                    <button
+                        onClick={() => setPaginaAtual(p => Math.max(p - 1, 1))}
+                        disabled={paginaAtual === 1}>
+                        ← Anterior
+                    </button>
+                    {[...Array(paginasLixeira)].map((_, idx) => {
+                        const page = idx + 1;
+                        return (
+                            <button
+                            key={page}
+                            onClick={() => setPaginaAtual(page)}
+                            style={{
+                                fontWeight: page === paginaAtual ? 'bold' : 'normal',
+                                filter: page === paginaAtual ? 'brightness(0.5)' : 'brightness(1)',
+                            }}
+                            >
+                            {page}
+                            </button>
+                        );
+                    })}
+                    <button
+                        onClick={() => setPaginaAtual(p => Math.min(p + 1, paginasLixeira))}
+                        disabled={paginasLixeira === paginasLixeira}
+                        >
+                        Próximo →
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
         <Modal open={open}>
-                <form method="post" onSubmit={submitForm}>
+            <form method="post" onSubmit={submitForm}>
+                <div className="column">
                     <label>Nome:</label>
                     <input defaultValue={selected?.nome} required type="text" name="nome"/>
                     <label>Email:</label>
-                    <input defaultValue={selected?.email} type="text" name="email"/>
+                    <input defaultValue={selected?.email} required type="text" name="email"/>
                     <label>CPF:</label>
                     <input
                         value={cpf}
@@ -183,7 +269,7 @@ export default function ClientePage() {
                             }
                         }}
                         onChange={(e) => setCpf(e.target.value)}
-                        defaultValue={selected?.cpf} required type="text" name="cpf"/>
+                        required type="text" name="cpf"/>
                     <label>Data de nascimento:</label>
                     <input defaultValue={selected?.dataNascimento.split("T")[0]} required name="data-nascimento" type="date"/>
                     <div className="column">
@@ -193,7 +279,18 @@ export default function ClientePage() {
                         <button type="submit">Cadastrar</button>
                         <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
                     </div>
-                </form>
+                </div>
+                <div className={`${selected?.ativo == false ? "" : "hidden"}`}>
+                    <div className="row-end">
+                        <button>restaurar</button>
+                    </div>
+                </div>
+                <div className={`${selected?.ativo ? "" : "hidden"}`}>
+                    <div className="row-end">
+                        <button onClick={() => {setApagar(true)}}>apagar</button>
+                    </div>
+                </div>
+            </form>
         </Modal>
     </div>
 }
@@ -210,4 +307,32 @@ function LinhaCliente({ cliente, onClick }) {
         <td>{cliente.totalDivida}</td>
         <td>{data.toLocaleString()}</td>
     </tr>)
+}
+
+function ClienteCard({ cliente, onClick }) {
+
+    return <div onClick={onClick} class="card"
+    >
+        <h4>{cliente.nome}</h4>
+        <ul>
+            <li>
+                <img height="72" src="/user-icon-on-transparent-background-free-png.png"></img>
+            </li>
+            <li>
+                <strong>ID:</strong> {cliente.id}
+            </li>
+            <li>
+                <strong>Idade:</strong> {cliente.idade}
+            </li>
+            <li>
+                <strong>Cpf:</strong> {cliente.cpf}
+            </li>
+            <li>
+                <strong>E-mail:</strong> {cliente.email}
+            </li>
+            <li>
+                <strong>Total em Divida:</strong> R${cliente.totalDivida}
+            </li>
+        </ul>
+    </div>
 }

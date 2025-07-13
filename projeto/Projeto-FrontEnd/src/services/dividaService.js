@@ -50,3 +50,14 @@ export async function getDividaById(id) {
         data: dados
     }
 }
+
+export async function deleteDivida(id) {
+    const resultado = await fetch(`${URL_API}/api/Divida/${id}`, {
+        method: "DELETE"
+    });
+    var dados = await resultado.json();
+    return {
+        status: resultado.status,
+        data: dados
+    }
+}

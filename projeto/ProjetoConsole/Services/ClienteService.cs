@@ -70,6 +70,7 @@ namespace ProjetoConsole.Services
         {
             var resultado = repository
                 .Consultar<Cliente>()
+                .Where(item => item.Ativo)
                 .OrderByDescending(item => item.TotalDivida)
                 .ToList();
             return resultado;
@@ -80,7 +81,18 @@ namespace ProjetoConsole.Services
             // lambda expression - LINQ
             var resultado = repository
                 .Consultar<Cliente>()
-                .Where(item => item.Nome.Contains(pesquisa))
+                .Where(item => item.Nome.Contains(pesquisa) && item.Ativo)
+                .OrderByDescending(item => item.TotalDivida)
+                .ToList();
+            return resultado;
+        }
+
+        public List<Cliente> ConsultarLixeira(string pesquisa = "")
+        {
+            // lambda expression - LINQ
+            var resultado = repository
+                .Consultar<Cliente>()
+                .Where(item => item.Nome.Contains(pesquisa) && item.Ativo == false)
                 .OrderByDescending(item => item.TotalDivida)
                 .ToList();
             return resultado;
@@ -104,6 +116,7 @@ namespace ProjetoConsole.Services
             existente.Email = cliente.Email;
             existente.Cpf = cliente.Cpf;
             existente.DataNascimento = cliente.DataNascimento;
+            existente.Ativo = cliente.Ativo;
 
             var valido = Validar(cliente, out mensagens);
             if (valido)
@@ -129,10 +142,18 @@ namespace ProjetoConsole.Services
             var existente = ConsultarPorCodigo(codigo);
             try
             {
-                using var transacao = repository.IniciarTransacao();
-                repository.Excluir(existente);
-                repository.Commit();
-                return existente;
+                if (existente.Ativo)
+                {
+                    existente.Ativo = false;
+                    return Editar(existente, out _);
+                }
+                else
+                {
+                    using var transacao = repository.IniciarTransacao();
+                    repository.Excluir(existente);
+                    repository.Commit();
+                    return existente;
+                }
             }
             catch (Exception)
             {

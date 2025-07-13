@@ -9,13 +9,17 @@ namespace ProjetoConsole.Models
         public long Id { get; set; }
         [Required, MaxLength(50)]
         public string Nome { get; set; }
+        [ Required ]
         public string Email { get; set; }
+        [ Required ]
 
         [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$",
             ErrorMessage = "O CPF está com formato inválido")]
         public string Cpf { get; set; }
+        [ Required ]
         public float TotalDivida { get; set; }
         public DateTime? DataNascimento { get; set; }
+        [ Required ]
 
         public int Idade
         {
@@ -35,6 +39,8 @@ namespace ProjetoConsole.Models
 
         public DateTime DataCadastro { get; private set; }
         = DateTime.Now;
+
+        public bool Ativo { get; set; }
 
         public virtual string GetPrintMessage()
         {

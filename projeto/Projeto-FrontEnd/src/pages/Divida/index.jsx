@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react"
-import { getDividaById, listarDividas, salvarDivida } from "../../services/dividaService";
+import { deleteDivida, getDividaById, listarDividas, salvarDivida } from "../../services/dividaService";
 import { listarClientes} from "../../services/clienteService";
 import Modal from "../../components/Modal";
 
@@ -29,6 +29,8 @@ export default function DividaPage() {
 
     const [paginaAtual, setPaginaAtual] = useState(1);
 
+    const [apagar, setApagar] = useState(false)
+
     const dividasAtual = useMemo(() => {
         const primeiroIdx = (paginaAtual - 1) * tamPagina;
         const ultimoIdx = primeiroIdx + tamPagina;
@@ -55,6 +57,19 @@ export default function DividaPage() {
         const formData = new FormData(form);
         const situacao = formData.get("situacao")? true : false
 
+        if (apagar) {
+            if (selected) {
+                const deleta = await deleteDivida(selected.id)
+                if (deleta.status == 200){
+                    fetchData();
+                }else {
+                    if (resultado.status == 422) {
+                        setErros(resultado.data);
+                    }
+                }
+            }
+        }
+
         const divida = {
             valor: formData.get("valor"),
             clienteId: formData.get("cliente"),
@@ -74,6 +89,8 @@ export default function DividaPage() {
                 setErros(resultado.data);
             }
         }
+
+        setApagar(false)
     }
     useEffect(() => {
         if (selected) {
@@ -118,7 +135,7 @@ export default function DividaPage() {
     };
 
     return (<>
-        <h1>DIVIDAS</h1>
+        <h1>Dividas</h1>
 
         <div className="row">
             <label>Pesquisa:</label>
@@ -197,31 +214,38 @@ export default function DividaPage() {
 
         <Modal open={open}>
             <form method="post" onSubmit={submitForm}>
-                <label>Valor:</label>
-                <input defaultValue={selected?.valor} required type="number" name="valor"/>
-                <label>Cliente:</label>
-                <select value={cltid} onChange={(e) => setCltid(e.target.value)} required name="cliente">
-                    {
-                        clientes.map(clt =>
-                            <option key={clt.id} value={clt.id}>{clt.nome}</option>
-                        )
-                    }
-                </select>
-                <label>Situação</label>
-                <select value={situacao} onChange={(e) => setSituacao(e.target.value)} name="situacao">
-                    <option value="">Pendente</option>
-                    <option value="true">Paga</option>
-                </select>
-                <label>Descrição:</label>
-                <textarea defaultValue={selected?.descricao} required name="descricao"></textarea>
-                <label>Data de pagamento:</label>
-                <input defaultValue={selected?.dataPagamento.split("T")[0]} required name="data-pagamento" type="date" />
                 <div className="column">
-                    {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
+                    <label>Valor:</label>
+                    <input defaultValue={selected?.valor} required type="number" name="valor"/>
+                    <label>Cliente:</label>
+                    <select value={cltid} onChange={(e) => setCltid(e.target.value)} required name="cliente">
+                        {
+                            clientes.map(clt =>
+                                <option key={clt.id} value={clt.id}>{clt.nome}</option>
+                            )
+                        }
+                    </select>
+                    <label>Situação</label>
+                    <select value={situacao} onChange={(e) => setSituacao(e.target.value)} name="situacao">
+                        <option value="">Pendente</option>
+                        <option value="true">Paga</option>
+                    </select>
+                    <label>Descrição:</label>
+                    <textarea defaultValue={selected?.descricao} required name="descricao"></textarea>
+                    <label>Data de pagamento:</label>
+                    <input defaultValue={selected?.dataPagamento.split("T")[0]} required name="data-pagamento" type="date" />
+                    <div className="column">
+                        {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
+                    </div>
+                    <div className="row">
+                        <button type="submit">Cadastrar</button>
+                        <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
+                    </div>
                 </div>
-                <div className="row">
-                    <button type="submit">Cadastrar</button>
-                    <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
+                <div className={selected? "" : "hidden"}>
+                    <div className="column">
+                        <button onClick={() => {setApagar(true)}}>apagar</button>
+                    </div>
                 </div>
             </form>
         </Modal>
@@ -231,12 +255,16 @@ export default function DividaPage() {
 function LinhaDivida({ clientes, divida, onClick }) {
     const data = new Date(divida.dataCadastro);
     const situacao = divida.situacao? "Paga" : "Pendente";
-    clientes.sort((a, b) => a.id - b.id)
+    const cliente = clientes.find(c => c.id === divida.clienteId);
+
+    const nome = cliente?.nome?.trim()
+        ? cliente.nome
+        : "Cliente não encontrado";
 
     return (<tr onClick={onClick}>
         <td>{divida.id}</td>
         <td>{divida.valor}</td>
-        <td>{clientes[divida.clienteId-1].nome}</td>
+        <td>{nome}</td>
         <td>{situacao.toLocaleString()}</td>
         <td>{new Date(divida.dataPagamento).toLocaleString()}</td>
         <td>{data.toLocaleString()}</td>

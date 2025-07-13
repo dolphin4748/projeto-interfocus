@@ -16,20 +16,23 @@ namespace ProjAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(string pesquisa)
+        public IActionResult Get(string pesquisa, bool lixeira = false)
         {
-            return string.IsNullOrEmpty(pesquisa) ? 
-                Ok(servico.Consultar()) :
-                Ok(servico.Consultar(pesquisa));
+            if (lixeira)
+            {
+                return string.IsNullOrEmpty(pesquisa) ?
+                    Ok(servico.ConsultarLixeira()) :
+                    Ok(servico.ConsultarLixeira(pesquisa));
+            }else {
+                return string.IsNullOrEmpty(pesquisa) ?
+                    Ok(servico.Consultar()) :
+                    Ok(servico.Consultar(pesquisa));
+            }
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] Cliente cliente)
         {
-            // ClienteService, ClienteBusiness
-            // controllers: camada de acesso
-            // services: camada de negócio
-            // repositories: camada de dados
             if (servico.Cadastrar(cliente, out List<MensagemErro> erros))
             {
                 return Ok(cliente);

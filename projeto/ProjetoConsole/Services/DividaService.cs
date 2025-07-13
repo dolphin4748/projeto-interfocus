@@ -121,6 +121,7 @@ namespace ProjetoConsole.Services
             existente.Situacao = divida.Situacao;
             existente.Descricao = divida.Descricao;
             existente.DataPagamento = divida.DataPagamento;
+
             try
             {
                 using var transacao = repository.IniciarTransacao();
@@ -133,6 +134,7 @@ namespace ProjetoConsole.Services
                 repository.Rollback();
                 return null;
             }
+            
         }
 
         public Divida Deletar(int id)

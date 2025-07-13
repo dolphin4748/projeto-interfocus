@@ -1,15 +1,15 @@
 ﻿create sequence clientes_seq;
 create sequence dividas_seq;
-create sequence contas_seq;
 
 create table clientes (
 	id bigint not null default nextval('clientes_seq'),
 	nome varchar(100) not null,
 	cpf varchar(20) not null,
-	email text,
+	email text not null,
 	totaldivida numeric default 0,
 	datanascimento date not null,
 	datacadastro timestamp not null default now(),
+	ativo bool not null default true,
 	primary key (id)
 );
 

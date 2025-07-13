@@ -15,8 +15,8 @@ export async function salvarCliente(cliente) {
     }
 }
 
-export function listarClientes(busca) {
-    return fetch(`${URL_API}/api/cliente?pesquisa=${busca || ""}`, {
+export function listarClientes(busca, lixeira = false) {
+    return fetch(`${URL_API}/api/cliente?pesquisa=${busca || ""}&lixeira=${lixeira}`, {
         method: "GET"
     }).then(async resultado => {
         if (resultado.status === 200) {
