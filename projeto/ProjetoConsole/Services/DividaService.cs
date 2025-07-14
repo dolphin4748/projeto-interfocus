@@ -58,9 +58,13 @@ namespace ProjetoConsole.Services
                 }
             //throw new Exception("dados invalidos!!!!");
             Cliente cliente = repository.ConsultarPorId<Cliente>(divida.ClienteId);
-            if (cliente.TotalDivida + divida.Valor > 200) {
-                mensagens.Add(new MensagemErro("totalDivida", "Cliente ira exceder o limite de R$200"));
-                validation = false;
+            if (divida.Situacao == false)
+            {
+                if (cliente.TotalDivida + divida.Valor > 200)
+                {
+                    mensagens.Add(new MensagemErro("totalDivida", "Cliente ira exceder o limite de R$200"));
+                    validation = false;
+                }
             }
             return validation;
         }
