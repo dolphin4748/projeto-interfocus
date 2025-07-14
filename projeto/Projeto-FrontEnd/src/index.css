@@ -217,7 +217,9 @@ textarea {
 }
 
 .modal form {
+    position: fixed;
     padding: 24px;
+    top: 20%;
     background-color: white;
     height: fit-content;
     border-radius: 16px;
@@ -307,4 +309,15 @@ button:hover {
   color: #999;
   border-color: #eee;
   cursor: default;
+}
+
+.div-erro {
+    position: fixed;
+    top: 10%;
+    left: 25%;
+    width: fit-content;
+    height: fit-content;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 16px;
 }

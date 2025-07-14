@@ -88,6 +88,7 @@ export default function DividaPage() {
             if (resultado.status == 422) {
                 setErros(resultado.data);
             }
+            setErros(resultado.data);
         }
 
         setApagar(false)
@@ -234,9 +235,6 @@ export default function DividaPage() {
                     <textarea defaultValue={selected?.descricao} required name="descricao"></textarea>
                     <label>Data de pagamento:</label>
                     <input defaultValue={selected?.dataPagamento.split("T")[0]} required name="data-pagamento" type="date" />
-                    <div className="column">
-                        {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
-                    </div>
                     <div className="row">
                         <button type="submit">Cadastrar</button>
                         <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
@@ -249,6 +247,11 @@ export default function DividaPage() {
                 </div>
             </form>
         </Modal>
+        <div className={`${erros.length ? "" : "hidden"}`}>
+            <div className="div-erro column">
+                {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
+            </div>
+        </div>
     </>)
 }
 

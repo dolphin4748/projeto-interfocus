@@ -60,10 +60,10 @@ namespace ProjAPI.Controllers
         [HttpPut]
         public IActionResult Put([FromBody] Divida Divida)
         {
-            var resultado = servico.Editar(Divida);
+            var resultado = servico.Editar(Divida, out List<MensagemErro> erros);
             if (resultado == null)
             {
-                return NotFound();
+                return UnprocessableEntity(erros);
             }
             return Ok(resultado);
         }

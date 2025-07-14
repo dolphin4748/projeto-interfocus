@@ -89,7 +89,6 @@ export default function ClientePage() {
             if (resultado.status == 422) {
                 setErros(resultado.data);
             }
-            setErros(resultado.data);
         }
         setApagar(false)
     }
@@ -272,9 +271,6 @@ export default function ClientePage() {
                         required type="text" name="cpf"/>
                     <label>Data de nascimento:</label>
                     <input defaultValue={selected?.dataNascimento.split("T")[0]} required name="data-nascimento" type="date"/>
-                    <div className="column">
-                        {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
-                    </div>
                     <div className="row">
                         <button type="submit">Cadastrar</button>
                         <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
@@ -282,16 +278,21 @@ export default function ClientePage() {
                 </div>
                 <div className={`${selected?.ativo == false ? "" : "hidden"}`}>
                     <div className="row-end">
-                        <button>restaurar</button>
+                        <button type="submit">restaurar</button>
                     </div>
                 </div>
                 <div className={`${selected?.ativo ? "" : "hidden"}`}>
                     <div className="row-end">
-                        <button onClick={() => {setApagar(true)}}>apagar</button>
+                        <button type="submit" onClick={() => {setApagar(true)}}>apagar</button>
                     </div>
                 </div>
             </form>
         </Modal>
+        <div className={`${erros.length ? "" : "hidden"}`}>
+            <div className="div-erro column">
+                {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}
+            </div>
+        </div>
     </div>
 }
 

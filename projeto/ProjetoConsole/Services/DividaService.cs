@@ -108,12 +108,13 @@ namespace ProjetoConsole.Services
             return repository.ConsultarPorId<Divida>(id);
         }
 
-        public Divida Editar(Divida divida)
+        public Divida Editar(Divida divida, out List<MensagemErro> mensagens)
         {
             var existente = ConsultarPorCodigo(divida.Id);
 
             if (existente == null)
             {
+                mensagens = null;
                 return null;
             }
             existente.ClienteId = divida.ClienteId;
@@ -122,18 +123,23 @@ namespace ProjetoConsole.Services
             existente.Descricao = divida.Descricao;
             existente.DataPagamento = divida.DataPagamento;
 
-            try
+            var valido = Validar(divida, out mensagens);
+            if (valido)
             {
-                using var transacao = repository.IniciarTransacao();
-                repository.Salvar(existente);
-                repository.Commit();
-                return existente;
+                try
+                {
+                    using var transacao = repository.IniciarTransacao();
+                    repository.Salvar(existente);
+                    repository.Commit();
+                    return existente;
+                }
+                catch (Exception)
+                {
+                    repository.Rollback();
+                    return null;
+                }
             }
-            catch (Exception)
-            {
-                repository.Rollback();
-                return null;
-            }
+            return null;
             
         }
 
