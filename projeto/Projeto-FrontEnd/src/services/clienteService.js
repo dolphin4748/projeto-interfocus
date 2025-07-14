@@ -43,3 +43,14 @@ export async function getClienteById(id) {
         data: dados
     }
 }
+
+export async function deleteCliente(id) {
+    const resultado = await fetch(`${URL_API}/api/cliente/${id}`, {
+        method: "DELETE"
+    });
+    var dados = await resultado.json();
+    return {
+        status: resultado.status,
+        data: dados
+    }
+}

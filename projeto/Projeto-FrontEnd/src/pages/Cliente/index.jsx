@@ -1,5 +1,5 @@
 import { useEffect, useState, useReducer, useMemo } from "react";
-import { listarClientes, salvarCliente, getClienteById } from "../../services/clienteService";
+import { listarClientes, salvarCliente, getClienteById, deleteCliente } from "../../services/clienteService";
 import Modal from "../../components/Modal";
 
 const tamPagina = 9;
@@ -19,7 +19,7 @@ export default function ClientePage() {
 
     const [erros, setErros] = useState([]);
 
-    const [apagar, setApagar] = useState(false)
+    const [apagar, setApagar] = useState()
 
     const [cpf, setCpf] = useReducer(
         (oldValue, newValue) => {
@@ -70,6 +70,23 @@ export default function ClientePage() {
 
         const form = event.target;
         const formData = new FormData(form);
+
+        if (apagar) {
+            if (selected) {
+                if (selected.ativo == false) {
+                    const deleta = await deleteCliente(selected.id)
+                    if (deleta.status == 200){
+                        fetchData();
+                        setApagar(false)
+                        return null;
+                    }else {
+                        if (resultado.status == 422) {
+                            setErros(resultado.data);
+                        }
+                    }
+                }
+            }
+        }
 
         const cliente = {
             nome: formData.get("nome"),
@@ -272,18 +289,20 @@ export default function ClientePage() {
                     <label>Data de nascimento:</label>
                     <input defaultValue={selected?.dataNascimento.split("T")[0]} required name="data-nascimento" type="date"/>
                     <div className="row">
-                        <button type="submit">Cadastrar</button>
+                        <button type="submit" onClick={() => {setEditar(true)}}>Cadastrar</button>
                         <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
                     </div>
                 </div>
-                <div className={`${selected?.ativo == false ? "" : "hidden"}`}>
-                    <div className="row-end">
-                        <button type="submit">restaurar</button>
+                <div className="column">
+                    <div className={`${selected?.ativo == false ? "" : "hidden"}`}>
+                        <div className="row-end">
+                            <button type="submit">restaurar</button>
+                        </div>
                     </div>
-                </div>
-                <div className={`${selected?.ativo ? "" : "hidden"}`}>
-                    <div className="row-end">
-                        <button type="submit" onClick={() => {setApagar(true)}}>apagar</button>
+                    <div className={selected? "" : "hidden"}>
+                        <div className="column">
+                            <button className="apagar" onClick={() => {setApagar(true)}}>apagar</button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -316,9 +335,6 @@ function ClienteCard({ cliente, onClick }) {
     >
         <h4>{cliente.nome}</h4>
         <ul>
-            <li>
-                <img height="72" src="/user-icon-on-transparent-background-free-png.png"></img>
-            </li>
             <li>
                 <strong>ID:</strong> {cliente.id}
             </li>

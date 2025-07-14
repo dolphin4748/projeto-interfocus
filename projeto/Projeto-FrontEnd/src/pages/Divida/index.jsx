@@ -23,9 +23,9 @@ export default function DividaPage() {
 
     const [erros, setErros] = useState([]);
 
-    const [search, setSearch] = useState(params.get("q"));
+    const [search, setSearch] = useState("");
 
-    const [cliente, setCliente] = useState(params.get("q"));
+    const [cliente, setCliente] = useState(0);
 
     const [paginaAtual, setPaginaAtual] = useState(1);
 
@@ -213,6 +213,10 @@ export default function DividaPage() {
             </button>
         </div>
 
+        <div className="totalDividas row">
+            <strong>total em dividas{cliente != 0 ? " do cliente " + clientes.find(c => c.id == cliente).nome : ""}: R${dividas.reduce((soma, divida) => soma + divida.valor, 0)}</strong>
+        </div>
+
         <Modal open={open}>
             <form method="post" onSubmit={submitForm}>
                 <div className="column">
@@ -242,7 +246,7 @@ export default function DividaPage() {
                 </div>
                 <div className={selected? "" : "hidden"}>
                     <div className="column">
-                        <button onClick={() => {setApagar(true)}}>apagar</button>
+                        <button className="apagar" onClick={() => {setApagar(true)}}>apagar</button>
                     </div>
                 </div>
             </form>
@@ -264,7 +268,7 @@ function LinhaDivida({ clientes, divida, onClick }) {
         ? cliente.nome
         : "Cliente não encontrado";
 
-    return (<tr onClick={onClick}>
+    return (<tr onClick={onClick} style={{backgroundColor: divida.situacao? "green" : ""}}>
         <td>{divida.id}</td>
         <td>{divida.valor}</td>
         <td>{nome}</td>
