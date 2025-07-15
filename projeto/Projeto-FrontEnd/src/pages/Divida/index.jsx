@@ -212,9 +212,10 @@ export default function DividaPage() {
                 Próximo →
             </button>
         </div>
-
+        
+        <br />
         <div className="totalDividas column">
-            <strong>{cliente != 0 ? "cliente: " + clientes.find(divida => divida.id == cliente).nome : ""}</strong>
+            <strong>{search ? "pesquisa: " + search : ""} {search && cliente ? "|" : ""} {cliente != 0 ? "cliente: " + clientes.find(divida => divida.id == cliente).nome : ""}</strong>
             <strong>total em dividas: R${dividas.filter(divida => divida.situacao == false).reduce((soma, divida) => soma + divida.valor, 0)}</strong>
             <strong>total em dividas pagas: R${dividas.filter(divida => divida.situacao == true).reduce((soma, divida) => soma + divida.valor, 0)}</strong>
         </div>
