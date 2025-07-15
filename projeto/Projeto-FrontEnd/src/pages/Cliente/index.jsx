@@ -37,6 +37,8 @@ export default function ClientePage() {
     const params = new URLSearchParams(window.location.search);
 
     const [paginaAtual, setPaginaAtual] = useState(1);
+
+    const [paginaAtualLixeira, setPaginaAtualLixeira] = useState(1);
     
     const clientesAtual = useMemo(() => {
         const primeiroIdx = (paginaAtual - 1) * tamPagina;
@@ -47,12 +49,12 @@ export default function ClientePage() {
     const totalPaginas = Math.ceil(clientes.length / tamPagina);
 
     const lixeiraAtual = useMemo(() => {
-        const primeiroIdx = (paginaAtual - 1) * tamPagina;
+        const primeiroIdx = (paginaAtualLixeira - 1) * tamPagina;
         const ultimoIdx = primeiroIdx + tamPagina;
         return lixeira.slice(primeiroIdx, ultimoIdx);
-    }, [paginaAtual, lixeira]);
+    }, [paginaAtualLixeira, lixeira]);
 
-    const paginasLixeira = Math.ceil(clientes.length / tamPagina);
+    const paginasLixeira = Math.ceil(lixeira.length / tamPagina);
 
     const fetchData = async () => {
         const resultado = await listarClientes(search);
@@ -71,13 +73,14 @@ export default function ClientePage() {
         const form = event.target;
         const formData = new FormData(form);
 
-        if (apagar) {
+        if (apagar == 1) {
             if (selected) {
                 if (selected.ativo == false) {
                     const deleta = await deleteCliente(selected.id)
                     if (deleta.status == 200){
                         fetchData();
-                        setApagar(false)
+                        setApagar(0)
+                        setOpen(false);
                         return null;
                     }else {
                         if (resultado.status == 422) {
@@ -87,13 +90,17 @@ export default function ClientePage() {
                 }
             }
         }
+        var ativo = true
+        if (apagar == 0) {ativo = true}
+        if (apagar == 1) {ativo = false}
+        if (apagar == 2) {ativo = selected?.ativo}
 
         const cliente = {
             nome: formData.get("nome"),
             email: formData.get("email"),
             cpf: formData.get("cpf"),
             dataNascimento: formData.get("data-nascimento"),
-            ativo: apagar ? false : true
+            ativo: ativo
         };
         if (selected?.id) {
             cliente.id = selected.id;
@@ -107,7 +114,7 @@ export default function ClientePage() {
                 setErros(resultado.data);
             }
         }
-        setApagar(false)
+        setApagar(0)
     }
 
     useEffect(() => {
@@ -202,6 +209,12 @@ export default function ClientePage() {
                 Próximo →
             </button>
         </div>
+        
+        <br />
+        <div className="totalDividas column">
+            <strong>{search ? "pesquisa: " + search : ""}</strong>
+            <strong>total em dividas: R${clientes.reduce((soma, cliente) => soma + cliente.totalDivida, 0)}</strong>
+        </div>
 
         <Modal open={abriLixeira}>
                 <div className="column">
@@ -240,8 +253,8 @@ export default function ClientePage() {
                 </table>
                 <div className="pagination">
                     <button
-                        onClick={() => setPaginaAtual(p => Math.max(p - 1, 1))}
-                        disabled={paginaAtual === 1}>
+                        onClick={() => setPaginaAtualLixeira(p => Math.max(p - 1, 1))}
+                        disabled={paginaAtualLixeira === 1}>
                         ← Anterior
                     </button>
                     {[...Array(paginasLixeira)].map((_, idx) => {
@@ -249,10 +262,10 @@ export default function ClientePage() {
                         return (
                             <button
                             key={page}
-                            onClick={() => setPaginaAtual(page)}
+                            onClick={() => setPaginaAtualLixeira(page)}
                             style={{
-                                fontWeight: page === paginaAtual ? 'bold' : 'normal',
-                                filter: page === paginaAtual ? 'brightness(0.5)' : 'brightness(1)',
+                                fontWeight: page === paginaAtualLixeira ? 'bold' : 'normal',
+                                filter: page === paginaAtualLixeira ? 'brightness(0.5)' : 'brightness(1)',
                             }}
                             >
                             {page}
@@ -260,8 +273,8 @@ export default function ClientePage() {
                         );
                     })}
                     <button
-                        onClick={() => setPaginaAtual(p => Math.min(p + 1, paginasLixeira))}
-                        disabled={paginasLixeira === paginasLixeira}
+                        onClick={() => setPaginaAtualLixeira(p => Math.min(p + 1, paginasLixeira))}
+                        disabled={paginaAtualLixeira === paginasLixeira}
                         >
                         Próximo →
                     </button>
@@ -289,19 +302,19 @@ export default function ClientePage() {
                     <label>Data de nascimento:</label>
                     <input defaultValue={selected?.dataNascimento.split("T")[0]} required name="data-nascimento" type="date"/>
                     <div className="row">
-                        <button type="submit" onClick={() => {setEditar(true)}}>Cadastrar</button>
+                        <button type="submit" onClick={() => {selected? setApagar(2) : setApagar(0)}}>Cadastrar</button>
                         <button type="reset" onClick={() => setOpen(false)}>Cancelar</button>
                     </div>
                 </div>
                 <div className="column">
                     <div className={`${selected?.ativo == false ? "" : "hidden"}`}>
                         <div className="row-end">
-                            <button type="submit">restaurar</button>
+                            <button type="submit" onClick={() => {setApagar(0)}}>restaurar</button>
                         </div>
                     </div>
                     <div className={selected? "" : "hidden"}>
                         <div className="column">
-                            <button className="apagar" onClick={() => {setApagar(true)}}>apagar</button>
+                            <button className="apagar" onClick={() => {setApagar(1), clientesAtual.length == 1 ? setPaginaAtual(1) : "", lixeiraAtual.length == 1 ? setPaginaAtualLixeira(1) : ""}}>apagar</button>
                         </div>
                     </div>
                 </div>
