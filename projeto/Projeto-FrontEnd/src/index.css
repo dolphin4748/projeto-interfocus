@@ -9,8 +9,7 @@ body {
 }
 
 h2 {
-    font-family: Arial, Helvetica, sans-serif;
-    color: blue;
+    color: rgba(42, 42, 255, 0.8);
 }
 
 table {
@@ -331,6 +330,14 @@ button:hover {
     display: flex;
     color: white;
     padding: 12px;
+    border-radius: 8px;
+    background-color: rgb(0, 0, 0, 0.8);
+}
+
+.container {
+    display: flex;
+    color: white;
+    padding: 24px;
     border-radius: 8px;
     background-color: rgb(0, 0, 0, 0.8);
 }
