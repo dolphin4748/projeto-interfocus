@@ -341,3 +341,12 @@ button:hover {
     border-radius: 8px;
     background-color: rgb(0, 0, 0, 0.8);
 }
+
+.aviso {
+    position: fixed;
+    padding: 24px;
+    top: 20%;
+    background-color: white;
+    height: fit-content;
+    border-radius: 16px;
+}

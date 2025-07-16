@@ -173,7 +173,7 @@ export default function ClientePage() {
             <button type="button" onClick={() => {
                 setOpen(true);
                 setSelected(null);
-                setCpf("")
+                setCpf("");
             }}>Novo Cliente</button>
         </div>
         <div className="grid-cards">
@@ -314,12 +314,16 @@ export default function ClientePage() {
                     </div>
                     <div className={selected? "" : "hidden"}>
                         <div className="column">
-                            <button className="apagar" onClick={() => {setApagar(1), clientesAtual.length == 1 ? setPaginaAtual(1) : "", lixeiraAtual.length == 1 ? setPaginaAtualLixeira(1) : ""}}>apagar</button>
+                            <button className="apagar" onClick={() => {setApagar(1),
+                                                                    clientesAtual.length == 1 ? setPaginaAtual(1) : "",
+                                                                    lixeiraAtual.length == 1 ? setPaginaAtualLixeira(1) : ""}
+                                                                }>apagar</button>
                         </div>
                     </div>
                 </div>
             </form>
         </Modal>
+
         <div className={`${erros.length ? "" : "hidden"}`}>
             <div className="div-erro column">
                 {erros.map(e => <strong className="error">{e.propriedade}: {e.mensagem}</strong>)}

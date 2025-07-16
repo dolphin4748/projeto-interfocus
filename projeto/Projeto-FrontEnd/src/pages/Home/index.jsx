@@ -47,6 +47,7 @@ export default function HomePage() {
             <h2>Pagina das dividas:</h2>
             <br />
             <p>. É possivel cadastrar, atualizar e apagar dividas</p>
+            <p>. Caso um cliente dentro da lixeira seja apagado, todas as dívidas em nome dele também serão apagadas</p>
             <p>. É possível marcar uma dívida como paga</p>
             <p>. A soma da dívidas é mostrada ao fim da pagina, sendo de um cliente expecifico ou todas</p>
         </div>
