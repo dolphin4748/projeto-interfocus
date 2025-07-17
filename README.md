@@ -1,18 +1,25 @@
 # projeto-interfocus
 
-## ferramentas utilizadas ##
+<h2>ferramentas utilizadas</h2>
+<ul>
+  <li>linguagens: C# e javascript</li>
+  <li>bibliotecas: NHibernate e react</li> 
+  <li>outros: HTML e css</li>
+</ul>
 
-. linguagens: C# e javascript
-. bibliotecas: NHibernate e react 
-. outros: HTML e css
+<h2>antes de iniciar</h2>
 
-## antes de iniciar ##
+<ul>
+  <li>na pasta do frontend executar pelo terminal:</li>
+  <ul>
+    <li>npm i</li>
+  </ul>
+  <li>criar um banco de dados postgres nomeado "projeto"</li>
+</ul>
 
-. na pasta do frontend executar pelo terminal:
-  -npm i
-. criar um banco de dados postgres nomeado "projeto"
+<h2>para iniciar</h2>
 
-## para iniciar ##
-
-. iniciar o program.cs para iniciar a api
-. executar npm run dev no terminal para abrir o front-end
+<ul>
+  <li>iniciar o program.cs para iniciar a api</li>
+  <li>executar npm run dev no terminal para abrir o front-end</li>
+</ul>
