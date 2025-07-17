@@ -152,7 +152,7 @@ export default function DividaPage() {
                 <option value="0">nenhum</option>
                 {
                     clientes.map(clt =>
-                        <option key={clt.id} value={clt.id}>{clt.nome}</option>
+                        <option key={clt.id} value={clt.id}>{clt.nome}({clt.cpf})</option>
                     )
                 }
             </select>
@@ -229,7 +229,7 @@ export default function DividaPage() {
                     <select value={cltid} onChange={(e) => setCltid(e.target.value)} required name="cliente">
                         {
                             clientes.map(clt =>
-                                <option key={clt.id} value={clt.id}>{clt.nome}</option>
+                                <option key={clt.id} value={clt.id}>{clt.nome}({clt.cpf})</option>
                             )
                         }
                     </select>
@@ -271,7 +271,7 @@ function LinhaDivida({ clientes, divida, onClick }) {
         ? cliente.nome
         : "Cliente não encontrado";
 
-    return (<tr onClick={onClick} style={{backgroundColor: divida.situacao? "green" : ""}}>
+    return (<tr onClick={onClick} style={{backgroundColor: divida.situacao? "green" : new Date(divida.dataPagamento) < new Date()? "red" : ""}}>
         <td>{divida.id}</td>
         <td>{divida.valor}</td>
         <td>{nome}</td>
