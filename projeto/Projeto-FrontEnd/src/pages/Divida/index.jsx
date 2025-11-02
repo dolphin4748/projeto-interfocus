@@ -91,6 +91,7 @@ export default function DividaPage() {
             setErros(resultado.data);
         }
 
+        form.reset();
         setApagar(false)
     }
     useEffect(() => {

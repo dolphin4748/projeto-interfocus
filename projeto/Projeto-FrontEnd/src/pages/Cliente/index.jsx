@@ -114,7 +114,9 @@ export default function ClientePage() {
                 setErros(resultado.data);
             }
         }
-        setApagar(0)
+
+        form.reset(); 
+        setApagar(0);
     }
 
     useEffect(() => {
